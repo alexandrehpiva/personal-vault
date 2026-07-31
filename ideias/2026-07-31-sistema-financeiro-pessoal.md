@@ -91,6 +91,93 @@ retiradas já efetuadas vs. saldo em conta. Confirma a necessidade de um
 módulo de pró-labore/PJ com lógica tributária própria, não só lançamento
 manual de valores.
 
+## Lógicas, fórmulas e cálculos extraídos (2026-07-31)
+
+Fórmulas reais lidas célula a célula (não só estrutura). Referência para
+quando o módulo de regras de negócio for desenhado.
+
+### Rateio de custo fixo (`Custo Fixo`)
+
+`% do total = valor do gasto / soma de todos os gastos fixos` (coluna D
+sobre coluna C, `=C{n}/$C$22`). Simples — cada linha é % do bolo total de
+gastos fixos.
+
+### Saldo mensal (aba de cada mês, ex. `Ago 26`)
+
+`Saldo (C28) = Recebimentos totais (H6+H7) − Total de contas a pagar (C27)`
+
+### Rendimento de investimentos indexados ao CDI (aba de cada mês)
+
+Fórmula geral aplicada a cada posição (Inter CDB, Itaú CDB etc.):
+
+```
+rendimento_mensal = saldo × ((1 + taxa_CDI_anual/100)^(1/12) − 1)
+                          × (%_do_CDI_contratado/100)
+                          × (1 − %_IR/100)
+```
+
+Ou seja: converte taxa anual do CDI em taxa mensal composta, aplica o
+percentual do CDI contratado por produto (ex.: 120%, 100%, 110%, 140% do
+CDI, varia por banco/produto) e desconta IR na fonte quando aplicável.
+Tesouro Direto IPCA+ usa variação da mesma fórmula com taxa própria
+(ex.: "IPCA + 7,82" hardcoded). Um investimento (`Inter tesouro`) referencia
+diretamente a aba `Investimentos!F14` em vez de calcular localmente.
+
+### Pró-labore / impostos PJ (`Cálculo de imposto.xlsx`, regime Simples Nacional)
+
+**Alíquotas fixas (hardcoded na planilha, precisam virar parâmetros
+configuráveis no sistema, não constantes de código):**
+
+| Item | Alíquota |
+|---|---|
+| Pró-labore sobre faturamento | 28,2% |
+| INSS | 11% |
+| Imposto do Simples Nacional | 7,46% |
+| ISS Município | 2% (já embutido no imposto do Simples Nacional — não soma separado no total de descontos) |
+
+**Cadeia de cálculo:**
+
+1. `INSS = Faturamento × 11%`
+2. `Pró-labore bruto = Faturamento × 28,2%`
+3. `Imposto do Simples Nacional = Faturamento × 7,46%`
+4. `INSS sobre pró-labore bruto = (soma do pró-labore dos sócios) × 11%`
+5. `IRPF = soma do IRRF de cada sócio` (IRRF por sócio é valor calculado à
+   parte, não fórmula simples nessa planilha — provavelmente tabela
+   progressiva do IR, a esclarecer)
+6. `Total de descontos = INSS sobre pró-labore + Imposto Simples Nacional + IRPF`
+7. `Pró-labore líquido = Pró-labore bruto − INSS sobre pró-labore − IRPF`
+8. `Total a receber (empresa) = Faturamento − Total de descontos`
+
+**Split por sócio (Alexandre e esposa, 50/50 no exemplo observado):**
+
+- `GPS (INSS individual) = Pró-labore do sócio × 11%`
+- `Retirada líquida do sócio = Pró-labore do sócio − IRRF do sócio − GPS do sócio`
+- Comparação contra um valor de referência mensal fixo (ex.: R$ 2.300)
+  para calcular ajuste/diferença por sócio.
+
+**Controle de retirada:**
+
+- `Limite de retirada = Saldo em conta − Total de descontos − Contabilidade`
+- `A retirar = Limite de retirada − retiradas já feitas por cada sócio`
+
+**Inconsistências encontradas na planilha atual (a esclarecer com Alexandre
+antes de implementar — não replicar cegamente):**
+
+1. O valor de pró-labore por sócio (ex.: R$ 2.966,52 cada) é **digitado
+   manualmente**, não derivado por fórmula do pró-labore bruto total — os
+   dois não batem exatamente (2.966,52 × 2 = 5.933,04 vs. pró-labore bruto
+   calculado de 5.921,99 pela fórmula faturamento × 28,2%). Perguntar se o
+   sistema novo deve sempre calcular automaticamente, com o rateio por
+   sócio sendo só a divisão do valor calculado, ou se algum ajuste manual
+   continua necessário.
+2. Existe também um "pró-labore ajuste manual" com alíquota de 28% (em vez
+   de 28,2%) — não fica claro na planilha quando um ou outro é usado.
+3. A fórmula de "limite de retirada" parece subtrair o valor de
+   Contabilidade **duas vezes** (uma vez embutido no total de descontos via
+   outra célula, outra vez explicitamente na fórmula do limite) — possível
+   erro de planilha, não bug do sistema novo. Confirmar com Alexandre antes
+   de implementar a regra.
+
 ## Decisão — dados bancários (CC e pix)
 
 Alexandre confirmou que o sistema deve, no futuro, importar dados
