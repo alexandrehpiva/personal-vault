@@ -197,11 +197,24 @@ capturado:**
    Fator R" no módulo de PJ, não só um campo solto — mas a confirmar como
    epic de fase 2 ou MVP quando chegarmos na fase técnica.
 
-**Ainda em aberto (item 3):** a fórmula de "limite de retirada" subtrai o
-valor de Contabilidade duas vezes (confirmado célula a célula, não é
-suposição — ver explicação acima do chat). Alexandre não tinha percebido;
-ainda não confirmado se é intencional (margem de segurança) ou erro de
-arrasto de fórmula. Verificar antes de implementar essa regra.
+**Item 3 — resolvido (2026-07-31):** confirmado erro de arrasto de fórmula
+(não intencional) — `L21 = L16 − L17 − F15`, e `L17` já inclui `F15`,
+então Contabilidade (R$ 210 no exemplo) é subtraída duas vezes. Efeito
+prático: reduz o "limite de retirada" em ~1,1% a mais do que deveria,
+sempre no sentido conservador (nunca deixa retirar dinheiro demais) — por
+isso passou anos sem ser percebido como problema.
+
+**Decisão de produto a partir disso:** Alexandre usava esse "erro" sem
+saber como uma espécie de reserva — o valor que sobra fica na conta BS2
+da empresa até o mês seguinte, quando é retirado junto da repartição de
+lucros. Em vez de corrigir silenciosamente e quebrar esse hábito, o
+sistema novo formaliza isso como recurso deliberado: **campo de "buffer/
+reserva de retirada" (%)**, configurável por tenant, que reduz o limite de
+retirada calculado por uma margem percentual fixa (substitui a duplicação
+acidental por uma escolha explícita). **Desativado por padrão** para
+outras famílias/tenants (não é comportamento óbvio, ninguém deveria herdar
+isso sem escolher); Alexandre ativa e configura o percentual que replica o
+que já faz hoje.
 
 ## Decisão — dados bancários (CC e pix)
 
@@ -307,6 +320,11 @@ rápida para a escrita da documentação de produto.
    três conceitos ligados mas independentes, configuráveis por tenant
    (nem toda família organiza do mesmo jeito; pode ter sócio CLT em vez
    de PJ). Possível recurso dedicado: calculadora/estimador de Fator R.
+   Também tem **buffer/reserva de retirada (%)**, configurável por tenant
+   e desativado por padrão — reduz o limite de retirada calculado por uma
+   margem percentual fixa (formaliza um hábito real do Alexandre, que
+   surgiu de um erro de fórmula na planilha atual; ver seção de fórmulas
+   acima).
 8. **Import histórico** — importação assistida por agente de IA da
    planilha (2023+), como última etapa do MVP, depois do sistema em
    produção.
