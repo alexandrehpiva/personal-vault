@@ -10,6 +10,14 @@ a pagar, despesas mensais e outras informações financeiras) por um sistema
 próprio, com frontend e backend, hospedado na infra AWS pessoal (via skill
 `personal-infra-sre`) — privado, só para uso do Alexandre.
 
+## Visão de produto (ampliada em 2026-07-31)
+
+Não é só substituir a planilha: é o embrião de uma **plataforma agêntica de
+IA para gerenciamento financeiro completa**. Nasce como subsistema sob a
+marca guarda-chuva **AgentsTrail** (`agentstrail.dev`, o mesmo domínio que
+hospeda o Recepta) — sem lançamento público por enquanto, mas desenhado
+desde já pensando nisso (multi-tenant real, não só uso pessoal).
+
 ## Arquitetura pretendida
 
 Seguir o padrão usado no AudienceForge (`~/Projects/audienceforge.dev`):
@@ -46,8 +54,23 @@ Arquivo `Contas 2026.xlsx`, em uso desde set/2023. Estrutura:
 - **CC e pix**: dados bancários e chaves PIX — dado sensível.
 - **Planilha2**: composição do salário (bruto/INSS/IRRF/líquido).
 - **gasto carro**: seguro, gasolina, licenciamento, IPVA.
-- **Planilha4** e **Planilha3**: parecem parcialmente duplicadas/rascunho,
-  a confirmar com Alexandre se ainda são usadas.
+- **Planilha4**: lista simples de gastos fixos, mais antiga/redundante com
+  a aba "Custo Fixo" — pode servir de referência histórica, sem estrutura
+  nova a modelar.
+- **Planilha3**: descartada — Alexandre confirmou que não representa nada
+  relevante (números soltos sem cabeçalho).
+
+## Planilha de cálculo de pró-labore — o que foi mapeado (2026-07-31)
+
+Arquivo separado `Cálculo de imposto.xlsx`, recebido depois da planilha
+principal. Calcula, a partir do faturamento mensal da empresa (regime
+Simples Nacional): INSS, Imposto do Simples Nacional, ISS Município, IRPF,
+pró-labore bruto/líquido, total de descontos, valor de contabilidade — e
+divide o resultado entre os dois sócios (Alexandre e a esposa), com IRRF,
+GPS e retirada calculados por sócio, limite de retirada e controle de
+retiradas já efetuadas vs. saldo em conta. Confirma a necessidade de um
+módulo de pró-labore/PJ com lógica tributária própria, não só lançamento
+manual de valores.
 
 ## Decisão — dados bancários (CC e pix)
 
@@ -57,6 +80,34 @@ mas isso fica para depois do sistema já estar funcional (não é escopo do
 MVP). Implicação de arquitetura: guardar essa decisão como item de
 segurança a resolver antes de qualquer integração bancária real (chaves
 de API, escopo de acesso, criptografia em repouso).
+
+## Arquitetura pré-anotada (não fechada — Tech Lead confirma depois)
+
+- Multi-tenant SaaS, AWS Lambda, MongoDB Atlas (cloud NoSQL, mirando free
+  tier). Referências de código a estudar como base: `pipefy-middleware`
+  (estrutura de MCP, sem relação de negócio com este projeto) e exemplos
+  de Lambda + Python + FastAPI nas pastas de projetos Volpi.
+- Auth: Google OAuth SSO (app no GCP do Alexandre) + cadastro/convite de
+  usuários — multi-tenant real desde o início.
+- MCP obrigatório no MVP — Alexandre precisa conseguir interagir com a
+  plataforma via agente de IA (Claude), não só pela UI.
+
+## Épicos candidatos ampliados (pós-discussão de 2026-07-31)
+
+Além dos épicos originais (lançamentos mensais, custos fixos/parcelamentos,
+investimentos, cartões, dashboard), dois blocos novos de escopo:
+
+- **Gestão de empréstimos pessoais**: Alexandre (e a esposa) empresta
+  parcelas de cartão para familiares, sem juros; precisa de tela de
+  acompanhamento por pessoa/dívida e fluxo via agente de IA ("fulano me
+  pagou este mês" → agente confere o que é devido, tira dúvida, registra
+  o pagamento). Recurso genérico, para qualquer usuário da plataforma.
+- **Gestão completa de pró-labore/PJ**: conta empresarial, recebimentos e
+  retiradas, lógica tributária (ver planilha de cálculo de imposto acima),
+  possível integração com Contabilizei e Banco BS2.
+
+Import histórico da planilha (desde 2023) entra no MVP, mas como última
+etapa, depois do sistema já em produção.
 
 ## Status
 
