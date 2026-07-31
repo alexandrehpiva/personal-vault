@@ -1,7 +1,26 @@
-# Sistema de gerenciamento financeiro pessoal
+# Smart Grana (nome de trabalho)
 
 **Data:** 2026-07-31
 **Tags:** #financas-pessoais #aws #personal-infra-sre #audienceforge-pattern
+
+## Decisão — nome (2026-07-31)
+
+Nome de trabalho fechado: **"Smart Grana"** (não "Grana Certa" —
+`granacerta.com.br` já está registrado por terceiro; "Smart Grana" não teve
+nenhum conflito de marca encontrado). Não precisa de domínio próprio agora,
+já que o produto vive sob `agentstrail.dev`. Pode mudar no futuro sem custo
+de refatoração: repositórios, classes, variáveis e identificadores técnicos
+usam nomes **genéricos**, desacoplados da marca (ver seção "Convenção de
+nomenclatura técnica" abaixo).
+
+## Decisão — convenção de nomenclatura técnica (2026-07-31)
+
+Prefixo técnico: **`personal-finance`**, em inglês (mesmo padrão dos
+projetos Volpi: identificadores técnicos em inglês, nome comercial só na
+marca/frontend). Pasta-mãe `personal-finance/`, repos
+`personal-finance-frontend`, `personal-finance-backend`,
+`personal-finance-infra` etc. Sobrevive a qualquer troca futura do nome
+comercial sem custo de refatoração.
 
 ## Ideia
 
