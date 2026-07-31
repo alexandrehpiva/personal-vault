@@ -247,6 +247,46 @@ etapa, depois do sistema já em produção.
   (qual épico o Tech Lead ataca primeiro) fica a critério do Tech Lead na
   fase técnica — não é decisão de produto.
 
+## Recursos e telas previstas (visão consolidada, 2026-07-31)
+
+Síntese de tudo decidido acima, organizada por tela/módulo — referência
+rápida para a escrita da documentação de produto.
+
+1. **Dashboard** — visão geral consolidada: saldo, investimentos, cartões,
+   empréstimos a receber, relatórios de previsão de contas fixas. **Aberto:**
+   métricas/widgets exatos ainda não detalhados — refinar durante a escrita
+   da doc, não é bloqueante.
+2. **Lançamentos mensais** — contas a pagar/recebimentos/caixa; contas
+   fixas lançadas **automaticamente** todo mês a partir do catálogo, com
+   confirmação; relatórios de previsão.
+3. **Custos fixos** — catálogo de gastos recorrentes com % de rateio sobre
+   o total; serve de template para os lançamentos automáticos.
+4. **Investimentos** — carteira (FIIs, CDB, Tesouro Direto, poupança);
+   cálculo automático de rendimento (fórmula indexada ao CDI/IPCA
+   extraída da planilha). **Aberto:** Alexandre pediu "algo bem legal"
+   para contas pessoais e investimentos, sem detalhar o quê — aspiração
+   registrada, mas sem escopo concreto ainda; explorar com ele durante a
+   escrita ou numa rodada futura de grill-me.
+5. **Cartões de crédito** — cadastro de cartões, dia de fechamento/melhor
+   dia de compra, saldo devedor.
+6. **Empréstimos a terceiros** — devedor é contato sem login; cronograma
+   automático de parcelas; suporte a pular parcela com reajuste automático
+   das seguintes; fluxo via agente de IA para conferir e registrar
+   pagamento. Recurso genérico para qualquer usuário do tenant.
+7. **Pró-labore / PJ** — conta empresarial, recebimentos e retiradas;
+   cálculo tributário completo (Simples Nacional) por sócio, com limite
+   de retirada; manual no MVP, sem integração Contabilizei/BS2 (fase 2).
+8. **Import histórico** — importação assistida por agente de IA da
+   planilha (2023+), como última etapa do MVP, depois do sistema em
+   produção.
+9. **Multi-tenant / Auth** — Google OAuth SSO (GCP do Alexandre), cadastro
+   e convite de usuários; 1 tenant = 1 família; permissões iguais entre
+   membros no MVP, mas modelo de dados aberto para RBAC futuro.
+10. **MCP / Agente de IA** — interface conversacional cobrindo os módulos
+    acima (registrar pagamento de empréstimo, consultar saldo etc.),
+    obrigatória desde o MVP — não é feature isolada, é forma de acesso
+    paralela à UI em todo o sistema.
+
 ## Status
 
 Ainda em `ideias/` — não amadureceu para `projetos/` até a planilha ser
