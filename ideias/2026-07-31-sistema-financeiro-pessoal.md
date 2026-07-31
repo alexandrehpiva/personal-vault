@@ -160,23 +160,48 @@ configuráveis no sistema, não constantes de código):**
 - `Limite de retirada = Saldo em conta − Total de descontos − Contabilidade`
 - `A retirar = Limite de retirada − retiradas já feitas por cada sócio`
 
-**Inconsistências encontradas na planilha atual (a esclarecer com Alexandre
-antes de implementar — não replicar cegamente):**
+**Esclarecimentos do Alexandre (2026-07-31) — revisam os pontos 1 e 2
+abaixo, que originalmente pareciam inconsistência de planilha e na
+verdade são conceitos de negócio reais, mais ricos que o que eu tinha
+capturado:**
 
-1. O valor de pró-labore por sócio (ex.: R$ 2.966,52 cada) é **digitado
-   manualmente**, não derivado por fórmula do pró-labore bruto total — os
-   dois não batem exatamente (2.966,52 × 2 = 5.933,04 vs. pró-labore bruto
-   calculado de 5.921,99 pela fórmula faturamento × 28,2%). Perguntar se o
-   sistema novo deve sempre calcular automaticamente, com o rateio por
-   sócio sendo só a divisão do valor calculado, ou se algum ajuste manual
-   continua necessário.
-2. Existe também um "pró-labore ajuste manual" com alíquota de 28% (em vez
-   de 28,2%) — não fica claro na planilha quando um ou outro é usado.
-3. A fórmula de "limite de retirada" parece subtrair o valor de
-   Contabilidade **duas vezes** (uma vez embutido no total de descontos via
-   outra célula, outra vez explicitamente na fórmula do limite) — possível
-   erro de planilha, não bug do sistema novo. Confirmar com Alexandre antes
-   de implementar a regra.
+1. **Pró-labore contábil ≠ retirada real — são dois números diferentes de
+   propósito.** O "pró-labore contábil" é definido todo mês pela
+   Contabilizei, otimizando para pagar menos imposto (Fator R — ver item
+   2). Já o valor que cada sócio efetivamente retira em relação à
+   **"conta casa"** (conta interna compartilhada do casal, hospedada num
+   banco separado dos outros, no nome do Alexandre) é outro número,
+   digitado manualmente, e pode divergir do pró-labore contábil sem
+   problema — é assim que a família decide gerenciar. Além disso, existe
+   **lucro distribuído** como uma terceira forma de saída de dinheiro da
+   empresa, distinta de pró-labore. **Implicação de modelagem:** o
+   sistema não deve tratar "pró-labore" como a única fonte de renda PJ —
+   precisa modelar separadamente (a) pró-labore contábil/fiscal, (b)
+   lucro distribuído, (c) retirada real por sócio para a conta
+   compartilhada da família, como conceitos ligados mas independentes.
+   Isso também não é universal: cada família/tenant pode organizar esse
+   fluxo de um jeito diferente (ex.: sem "conta casa", ou com sócio que é
+   CLT em vez de PJ) — o modelo de fontes de renda deve ser **flexível e
+   configurável por tenant**, não hardcoded no padrão do Alexandre.
+2. **A alíquota de 28%/28,2% é uma estimativa para o Fator R, não um
+   valor incerto ou inconsistente.** O Fator R é a razão entre
+   folha+pró-labore acumulados em 12 meses e a receita bruta acumulada no
+   mesmo período — para empresas de serviço/software, se essa razão for
+   ≥ 28%, a empresa se enquadra no Anexo III do Simples Nacional (imposto
+   menor) em vez do Anexo V (mais caro). Alexandre usa 28% e 28,2% como
+   **estimativa de quanto precisa retirar de pró-labore total** (soma dos
+   sócios) para se manter acima desse limiar. O valor real de pró-labore
+   total é sempre a soma do que for lançado por sócio — a % é só uma meta
+   de planejamento, não uma fonte de verdade concorrente. **Implicação de
+   produto:** vale a pena um recurso dedicado de "calculadora/estimador de
+   Fator R" no módulo de PJ, não só um campo solto — mas a confirmar como
+   epic de fase 2 ou MVP quando chegarmos na fase técnica.
+
+**Ainda em aberto (item 3):** a fórmula de "limite de retirada" subtrai o
+valor de Contabilidade duas vezes (confirmado célula a célula, não é
+suposição — ver explicação acima do chat). Alexandre não tinha percebido;
+ainda não confirmado se é intencional (margem de segurança) ou erro de
+arrasto de fórmula. Verificar antes de implementar essa regra.
 
 ## Decisão — dados bancários (CC e pix)
 
@@ -276,6 +301,12 @@ rápida para a escrita da documentação de produto.
 7. **Pró-labore / PJ** — conta empresarial, recebimentos e retiradas;
    cálculo tributário completo (Simples Nacional) por sócio, com limite
    de retirada; manual no MVP, sem integração Contabilizei/BS2 (fase 2).
+   Modelo de renda PJ precisa separar **pró-labore contábil** (definido
+   pela contabilidade, otimizado por Fator R), **lucro distribuído** e
+   **retirada real por sócio** para a conta compartilhada da família —
+   três conceitos ligados mas independentes, configuráveis por tenant
+   (nem toda família organiza do mesmo jeito; pode ter sócio CLT em vez
+   de PJ). Possível recurso dedicado: calculadora/estimador de Fator R.
 8. **Import histórico** — importação assistida por agente de IA da
    planilha (2023+), como última etapa do MVP, depois do sistema em
    produção.
