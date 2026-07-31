@@ -142,6 +142,24 @@ investimentos, cartões, dashboard), dois blocos novos de escopo:
 Import histórico da planilha (desde 2023) entra no MVP, mas como última
 etapa, depois do sistema já em produção.
 
+## Decisões de produto — regras de negócio (2026-07-31)
+
+- **Contas fixas**: lançamento **automático mês a mês** a partir do
+  catálogo de custos fixos (não manual). Sistema também emite
+  **relatórios de previsão** e visualização em dashboard a partir desses
+  lançamentos recorrentes.
+- **Empréstimos a terceiros**: ao registrar um empréstimo parcelado,
+  sistema **gera cronograma automático** das parcelas futuras a receber.
+  Precisa suportar **pular parcela** (pessoa não paga naquele mês por
+  dificuldade financeira) com **reajuste automático**, empurrando as
+  parcelas restantes para os meses seguintes.
+- **Prioridade de entrega do MVP**: todos os épicos do MVP têm prioridade
+  igual — entrega é uma release única quando tudo estiver pronto, com o
+  import histórico da planilha (via agente de IA) rodando por último,
+  depois do sistema em produção. Ordem de **desenvolvimento** interna
+  (qual épico o Tech Lead ataca primeiro) fica a critério do Tech Lead na
+  fase técnica — não é decisão de produto.
+
 ## Status
 
 Ainda em `ideias/` — não amadureceu para `projetos/` até a planilha ser
