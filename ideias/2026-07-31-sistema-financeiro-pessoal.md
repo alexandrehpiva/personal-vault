@@ -131,8 +131,13 @@ investimentos, cartões, dashboard), dois blocos novos de escopo:
   pagou este mês" → agente confere o que é devido, tira dúvida, registra
   o pagamento). Recurso genérico, para qualquer usuário da plataforma.
 - **Gestão completa de pró-labore/PJ**: conta empresarial, recebimentos e
-  retiradas, lógica tributária (ver planilha de cálculo de imposto acima),
-  possível integração com Contabilizei e Banco BS2.
+  retiradas, lógica tributária (ver planilha de cálculo de imposto acima).
+  **Decisão (2026-07-31): integração com Contabilizei/Banco BS2 fica FORA
+  do MVP** — nenhuma das duas costuma ter API pública documentada para
+  PJ pequena, viraria investigação própria (scraping/engenharia reversa)
+  e atrasaria o resto. No MVP, o módulo funciona com lançamento manual
+  (como a planilha de cálculo de imposto faz hoje). Registrado como
+  possível epic de fase 2.
 
 Import histórico da planilha (desde 2023) entra no MVP, mas como última
 etapa, depois do sistema já em produção.
