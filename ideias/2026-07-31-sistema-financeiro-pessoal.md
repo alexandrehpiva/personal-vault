@@ -110,6 +110,15 @@ de API, escopo de acesso, criptografia em repouso).
   usuários — multi-tenant real desde o início.
 - MCP obrigatório no MVP — Alexandre precisa conseguir interagir com a
   plataforma via agente de IA (Claude), não só pela UI.
+- **Permissões (2026-07-31):** 1 tenant = 1 família; todo usuário
+  convidado tem acesso total e igual ao tenant no MVP (sem papéis/roles).
+  Restrição arquitetural: o modelo de dados/autorização não pode ser
+  desenhado de um jeito que torne difícil acrescentar níveis de permissão
+  depois — não é RBAC completo agora, mas precisa deixar a porta aberta.
+- **Empréstimos a terceiros (2026-07-31):** a pessoa que deve dinheiro
+  (irmão, pai, mãe etc.) é só um **contato/registro dentro do tenant**, sem
+  login próprio no MVP — só o(s) usuário(s) do tenant veem/atualizam. Login
+  para o devedor consultar o próprio saldo fica para fase 2.
 
 ## Épicos candidatos ampliados (pós-discussão de 2026-07-31)
 
